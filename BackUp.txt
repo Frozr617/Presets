@@ -3,9 +3,6 @@ import java.net.*;
 import java.util.Scanner;
 import java.awt.*;
 import java.util.InputMismatchException;;
-import java.nio.file.Paths;
-import java.nio.file.Path;
-import java.nio.file.Files;
 
 
 public class App{
@@ -216,52 +213,39 @@ public class App{
             System.out.println("Type the name of your combine command: ");
             Scanner nameOfCommand = new Scanner(System.in);
             String commandName = nameOfCommand.nextLine();
-            Path commandRepo = Paths.get("./Commands/Both/" + commandName);
-            Files.createDirectories(commandRepo);
-              //Part with url`s
-              System.out.println("How many url`s will be in your combine command?");
-              Scanner howManySites = new Scanner(System.in);
-              int sitesCount = howManySites.nextInt();
 
-              //Part with apps/files
-              System.out.println("How many apps and files will be in your combine command?");
-              Scanner howManyApps = new Scanner(System.in);
-              int appsCount = howManyApps.nextInt();
+            //Part with url`s
+            System.out.println("How many url`s will be in your combine command?");
+            Scanner howManySites = new Scanner(System.in);
+            int sitesCount = howManySites.nextInt();
+
+            //Part with apps/files
+            System.out.println("How many apps and files will be in your combine command?");
+            Scanner howManyApps = new Scanner(System.in);
+            int appsCount = howManyApps.nextInt();
 
 
-              //Writing into the .txt file
-              File urlPart = new File(commandRepo + "/url.txt");
-              File filePart = new File(commandRepo + "/file.txt");
-              BufferedWriter urlWriter = new BufferedWriter(new FileWriter(urlPart));
-              BufferedWriter fileWriter = new BufferedWriter(new FileWriter(filePart));
+            //Writing into the .txt file
+            File command = new File("./Commands/Both/" + commandName + ".txt");
+            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(command));
 
-              for(int i = 0; i != sitesCount; i++) {
-                  System.out.println("Enter the url: ");
-                  Scanner urlTaker = new Scanner(System.in);
-                  String url = urlTaker.nextLine();
+            for(int i = 0; i != sitesCount; i++) {
+                System.out.println("Enter the url: ");
+                Scanner urlTaker = new Scanner(System.in);
+                String url = urlTaker.nextLine();
 
-                  urlWriter.write(url);
-                  urlWriter.newLine();
-              }
-              urlWriter.close();
-
-              for (int f = 0; f != appsCount; f++) {
-                System.out.println("Enter the path to the app/file: ");
-                Scanner pathTaker = new Scanner(System.in);
-                String path = pathTaker.nextLine();
-
-                fileWriter.write(path);
+                fileWriter.write(url);
                 fileWriter.newLine();
-              }
-              fileWriter.close();
+            }
+            for (int f = 0; f != appsCount; f++) {
+              System.out.println("Enter the path to the app/file: ");
+              Scanner pathTaker = new Scanner(System.in);
+              String path = pathTaker.nextLine();
 
-              System.out.println("Do you wnat to test this command?\ny\nn");
-              Scanner willTest = new Scanner(System.in);
-              String testing = willTest.nextLine();
-
-              if (testing.equals("y")) {
-                startingCombineCommand(urlPart, filePart);
-              }
+              fileWriter.write(path);
+              fileWriter.newLine();
+            }
+            fileWriter.close();
           }
           catch(InputMismatchException er) {
             System.out.println("Input Mismatch Error");
@@ -270,35 +254,5 @@ public class App{
         catch(IOException e) {
           System.out.println("IO Error");
         }
-    }
-    public static void startingCombineCommand(File url, File files) {
-      try{
-        try{
-          Scanner urlScanner = new Scanner(url);
-          Scanner fileScanner = new Scanner(files);
-          Desktop device = Desktop.getDesktop();
-
-
-          while(urlScanner.hasNextLine()){
-            try{
-              URI uri = new URI(urlScanner.nextLine());
-              device.browse(uri);
-            }
-            catch(URISyntaxException er) {
-              System.out.println("URI Syntax Error!");
-            }
-          }
-          while(fileScanner.hasNextLine()){
-            File app = new File(fileScanner.nextLine());
-            device.open(app);
-          }
-        }
-        catch(FileNotFoundException error) {
-          System.out.println("File Not Found!");
-        }
-      }
-      catch(IOException e) {
-        System.out.println("IO Error");
-      }
     }
 }
