@@ -73,11 +73,18 @@ public class App{
             File commandToScan = new File("./Commands/WithoutNet/" + commandName + ".txt");
             startingAppsCommand(commandToScan);
         }
-        if (showingType == 1) {
+        if (showingType == 3) {
             File combineDirectory = new File("./Commands/Both");
             for(File f : combineDirectory.listFiles()) {
                 System.out.println(f.getName());
             }
+            System.out.println("Type the name of command to start it:");
+            Scanner nameOfCommand = new Scanner(System.in);
+            String commandName = nameOfCommand.nextLine();
+            Path commandRepo = Paths.get("./Commands/Both/" + commandName);
+            File urlPart = new File(commandRepo + "/url.txt");
+            File filePart = new File(commandRepo + "/file.txt");
+            startingCombineCommand(urlPart, filePart);
         }
     }
     public static void choosingTypeOfCommand() {
