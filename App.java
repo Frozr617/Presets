@@ -6,6 +6,7 @@ import java.util.InputMismatchException;;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.nio.file.Files;
+import java.lang.IllegalArgumentException;
 
 
 public class App{
@@ -46,10 +47,10 @@ public class App{
         for( File f : commandsDirectory.listFiles()){
             System.out.println( f.getName() );
         }
-        System.out.println("Choose the type of command to show\n2.With Net\n2.Without Net\n3.Combine");
+        System.out.println("Choose the type of command to show\n2.With Net\n2.Without Net\n3.Combine\nOr type 'Create New' to create new command");
         Scanner typeToShow = new Scanner(System.in);
-        int showingType = typeToShow.nextInt();
-        if (showingType == 1) {
+        String showingType = typeToShow.nextLine();
+        if (showingType.equals("1")) {
             File withNetDirectory = new File("./Commands/WithNet");
             for(File f : withNetDirectory.listFiles()) {
                 System.out.println(f.getName());
@@ -61,7 +62,7 @@ public class App{
             File commandToScan = new File("./Commands/WithNet/" + commandName + ".txt");
             startingUrlCommand(commandToScan);
         }
-        if (showingType == 2) {
+        if (showingType.equals("2")) {
             File withoutNetDirectory = new File("./Commands/WithoutNet");
             for(File f : withoutNetDirectory.listFiles()) {
                 System.out.println(f.getName());
@@ -73,7 +74,7 @@ public class App{
             File commandToScan = new File("./Commands/WithoutNet/" + commandName + ".txt");
             startingAppsCommand(commandToScan);
         }
-        if (showingType == 3) {
+        if (showingType.equals("3")) {
             File combineDirectory = new File("./Commands/Both");
             for(File f : combineDirectory.listFiles()) {
                 System.out.println(f.getName());
@@ -85,6 +86,12 @@ public class App{
             File urlPart = new File(commandRepo + "/url.txt");
             File filePart = new File(commandRepo + "/file.txt");
             startingCombineCommand(urlPart, filePart);
+        }
+        if (showingType.equals("Create New")) {
+          choosingTypeOfCommand();
+        }
+        else{
+          showingCommands();
         }
     }
     public static void choosingTypeOfCommand() {
@@ -133,6 +140,7 @@ public class App{
         catch(IOException er) {
             System.out.println("Error");
         }
+        showingCommands();
     }
     public static void startingUrlCommand(File withURL) {
         try{
@@ -171,8 +179,10 @@ public class App{
                     System.out.println("Enter the path to file or app: ");
                     Scanner pathScanner = new Scanner(System.in);
                     String path = pathScanner.nextLine();
-                    //Adding url`s to file
-                    fileWriter.write(path);
+                    String pathRemake = path.replace("'", "");
+                    String pathRemakeTwo = pathRemake.replace(" ", "");
+
+                    fileWriter.write(pathRemakeTwo);
                     fileWriter.newLine();
                 }
                 catch(InputMismatchException er) {
@@ -216,6 +226,7 @@ public class App{
         catch(IOException e) {
             System.out.println("Error");
         }
+        showingCommands();
     }
     public static void creatingCombineCommands() {
       try{
@@ -247,6 +258,7 @@ public class App{
                   Scanner urlTaker = new Scanner(System.in);
                   String url = urlTaker.nextLine();
 
+
                   urlWriter.write(url);
                   urlWriter.newLine();
               }
@@ -256,8 +268,10 @@ public class App{
                 System.out.println("Enter the path to the app/file: ");
                 Scanner pathTaker = new Scanner(System.in);
                 String path = pathTaker.nextLine();
+                String pathRemake = path.replace("'", "");
+                String pathRemakeTwo = pathRemake.replace(" ", "");
 
-                fileWriter.write(path);
+                fileWriter.write(pathRemakeTwo);
                 fileWriter.newLine();
               }
               fileWriter.close();
@@ -281,23 +295,28 @@ public class App{
     public static void startingCombineCommand(File url, File files) {
       try{
         try{
-          Scanner urlScanner = new Scanner(url);
-          Scanner fileScanner = new Scanner(files);
-          Desktop device = Desktop.getDesktop();
+          try{
+            Scanner urlScanner = new Scanner(url);
+            Scanner fileScanner = new Scanner(files);
+            Desktop device = Desktop.getDesktop();
 
 
-          while(urlScanner.hasNextLine()){
-            try{
-              URI uri = new URI(urlScanner.nextLine());
-              device.browse(uri);
+            while(urlScanner.hasNextLine()){
+              try{
+                URI uri = new URI(urlScanner.nextLine());
+                device.browse(uri);
+              }
+              catch(URISyntaxException er) {
+                System.out.println("URI Syntax Error!");
+              }
             }
-            catch(URISyntaxException er) {
-              System.out.println("URI Syntax Error!");
+            while(fileScanner.hasNextLine()){
+              File app = new File(fileScanner.nextLine());
+              device.open(app);
             }
           }
-          while(fileScanner.hasNextLine()){
-            File app = new File(fileScanner.nextLine());
-            device.open(app);
+          catch(IllegalArgumentException errorito) {
+            System.out.println("Error!");
           }
         }
         catch(FileNotFoundException error) {
@@ -307,5 +326,6 @@ public class App{
       catch(IOException e) {
         System.out.println("IO Error");
       }
+      showingCommands();
     }
 }

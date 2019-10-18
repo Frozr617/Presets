@@ -1,2 +1,0 @@
-https://askubuntu.com/questions/342202/failed-to-load-module-canberra-gtk-module-but-already-installed
-https://stackoverflow.com/questions/2458622/starting-other-applications-with-java
